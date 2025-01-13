@@ -1,0 +1,24 @@
+# Example configuration file
+concat_videos:
+    video_paths: ["input1.mp4", "input2.mp4"]
+    output_path: "output_concat.mp4"
+add_frozen_frame:
+    video_path: "input.mp4"
+    freeze_time: 10
+    freeze_duration: 5
+    output_path: "output_freeze.mp4"
+    freeze_position: "middle" #can be beginning, middle or end
+trim_video_by_intervals:
+    video_path: "input.mp4"
+    intervals:
+      - ["00:10", "00:20"]
+      - ["00:30", "00:40"]
+    output_path: "output_trim.mp4" # or you can pass a folder to cut into multiple parts
+change_playback_speed:
+  video_path: "input.mp4"
+  speed: 2 # 2x faster
+  output_path: "output_speed.mp4"
+change_subtitle_speed:
+    subtitle_path: "input.srt"
+    speed: 0.5 # 0.5x slower
+    output_path: "output_subtitle.srt"
