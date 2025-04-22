@@ -1,24 +1,45 @@
-# Example configuration file
+# Example configuration for video processing operations
+
+# Cut video into overlapping clips using sliding window
+cut_video_with_sliding_window:
+  video_path: "input.mp4"
+  window_length: 10 # Length of each clip in seconds
+  slide_step: 3 # Step size for sliding window in seconds
+  start_time: "01:00" # Optional: Start time in MM:SS format (default: "00:00")
+  end_time: "07:35" # Optional: End time in MM:SS format (default: video duration)
+  output_dir: "output_clips" # Directory to save the clips
+
+# Concatenate multiple videos into one
 concat_videos:
-    video_paths: ["input1.mp4", "input2.mp4"]
-    output_path: "output_concat.mp4"
+  video_paths:
+    - "clip1.mp4"
+    - "clip2.mp4"
+  output_path: "combined.mp4"
+
+# Add a frozen frame to a video
 add_frozen_frame:
-    video_path: "input.mp4"
-    freeze_time: 10
-    freeze_duration: 5
-    output_path: "output_freeze.mp4"
-    freeze_position: "middle" #can be beginning, middle or end
+  video_path: "input.mp4"
+  freeze_time: 5.0 # Time in seconds where to add the freeze frame
+  freeze_duration: 2.0 # Duration of the frozen frame in seconds
+  output_path: "frozen.mp4"
+  freeze_position: "middle" # Options: "beginning", "middle", "end"
+
+# Trim video into specific intervals
 trim_video_by_intervals:
-    video_path: "input.mp4"
-    intervals:
-      - ["00:10", "00:20"]
-      - ["00:30", "00:40"]
-    output_path: "output_trim.mp4" # or you can pass a folder to cut into multiple parts
+  video_path: "input.mp4"
+  intervals:
+    - ["00:00", "00:10"] # First interval: from 0:00 to 0:10
+    - ["00:20", "00:30"] # Second interval: from 0:20 to 0:30
+  output_path: "trimmed.mp4"
+
+# Change video playback speed
 change_playback_speed:
   video_path: "input.mp4"
-  speed: 2 # 2x faster
-  output_path: "output_speed.mp4"
+  speed: 1.5 # Speed multiplier (1.5x faster)
+  output_path: "sped_up.mp4"
+
+# Change subtitle timing to match video speed
 change_subtitle_speed:
-    subtitle_path: "input.srt"
-    speed: 0.5 # 0.5x slower
-    output_path: "output_subtitle.srt"
+  subtitle_path: "subtitles.srt"
+  speed: 1.5 # Speed multiplier (1.5x faster)
+  output_path: "sped_up_subtitles.srt"

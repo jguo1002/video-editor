@@ -1,81 +1,146 @@
-# Video Editor Script
+# Video Editor
 
-This Python script uses the `moviepy` library to perform various video editing tasks, including concatenating videos, adding frozen frames, trimming videos by intervals, changing playback speed, and modifying subtitle timings. It uses a YAML file for easy configuration.
+A Python-based video editing tool that provides various operations for video processing, including cutting, concatenation, speed adjustment, and more.
+
+## Features
+
+- **Video Cutting**: Cut videos into overlapping clips using a sliding window approach
+- **Video Concatenation**: Combine multiple videos into a single output
+- **Speed Adjustment**: Change video playback speed and subtitle timing
+- **Frozen Frames**: Add frozen frames at specific timestamps
+- **Interval Trimming**: Trim videos based on specific time intervals
+- **Configurable Operations**: All operations can be configured via YAML files
+
+## Project Structure
+
+```
+video_editor/
+├── src/
+│   ├── __init__.py
+│   ├── operations/
+│   │   ├── concatenation.py
+│   │   ├── trimming.py
+│   │   ├── speed.py
+│   │   └── frozen_frame.py
+│   └── utils/
+│       ├── time_utils.py
+│       └── config.py
+├── main.py
+├── config.yaml
+├── config_example.yaml
+└── requirements.txt
+```
 
 ## Requirements
 
-- Python 3.6 or higher
-- `moviepy` library
-- `PyYAML` library
+- Python 3.8+
+- FFmpeg
+- Required Python packages (see requirements.txt)
 
-## Setup
+## Installation
 
-### Using Conda (Recommended)
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd video_editor
+```
 
-1.  **Create a Conda environment:**
-    ```bash
-    conda create -n video_editor python=3.9
-    conda activate video_editor
-    ```
-    You can change `video_editor` to any name you prefer.
+2. Install FFmpeg:
+- On macOS: `brew install ffmpeg`
+- On Ubuntu/Debian: `sudo apt-get install ffmpeg`
+- On Windows: Download from [FFmpeg website](https://ffmpeg.org/download.html)
 
-2.  **Install the required packages:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+3. Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-### Using Pip
+## Usage
 
-1.  **Create a virtual environment (optional but recommended):**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Linux/macOS
-    venv\Scripts\activate  # On Windows
-    ```
-
-2.  **Install the required packages:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-## How to Use
-
-1.  **Save the script:** Save the provided Python code as `main.py`.
-2.  **Prepare your files:** Make sure you have your video files (e.g., `.mp4`) and subtitle files (e.g., `.srt`) in the same folder as the script or specify the correct paths in the configuration file.
-3.  **Configure the script:**
-    - The script uses a YAML file (`config.yaml`) to define the editing process.
-    - Place `config.yaml` in the same directory as `main.py`. You can change the config file name but make sure the name is consistent in the main file.
-    - The `config.yaml` file allows you to specify multiple video editing operations. See the example below for how to use it.
-4.  **Run the script:** Open your terminal, navigate to the folder containing the script, and run:
-    ```bash
-    python main.py
-    ```
-    This will apply the configurations specified in `config.yaml`, and output the edited videos/subtitles.
-
-### Example Configuration (`config.yaml`)
-
+1. Configure your video operations in `config.yaml`:
 ```yaml
-# Example configuration file
+cut_video_with_sliding_window:
+  video_path: "input.mp4"
+  window_length: 10
+  slide_step: 3
+  start_time: "01:00"  # Format: MM:SS
+  end_time: "07:35"    # Format: MM:SS
+  output_dir: "output_clips"
+```
+
+2. Run the main script:
+```bash
+python main.py
+```
+
+## Configuration Examples
+
+### Cutting Videos
+```yaml
+cut_video_with_sliding_window:
+  video_path: "input.mp4"
+  window_length: 10
+  slide_step: 3
+  start_time: "01:00"
+  end_time: "07:35"
+  output_dir: "output_clips"
+```
+
+### Concatenating Videos
+```yaml
 concat_videos:
-    video_paths: ["input1.mp4", "input2.mp4"]
-    output_path: "output_concat.mp4"
+  video_paths:
+    - "video1.mp4"
+    - "video2.mp4"
+  output_path: "combined.mp4"
+```
+
+### Adding Frozen Frames
+```yaml
 add_frozen_frame:
-    video_path: "input.mp4"
-    freeze_time: 10
-    freeze_duration: 5
-    output_path: "output_freeze.mp4"
-    freeze_position: "middle" #can be beginning, middle or end
+  video_path: "input.mp4"
+  freeze_time: "02:30"
+  freeze_duration: 3
+  output_path: "frozen.mp4"
+  freeze_position: "end"
+```
+
+### Trimming Videos
+```yaml
 trim_video_by_intervals:
-    video_path: "input.mp4"
-    intervals:
-      - ["00:10", "00:20"]
-      - ["00:30", "00:40"]
-    output_path: "output_trim.mp4" # or you can pass a folder to cut into multiple parts
+  video_path: "input.mp4"
+  intervals:
+    - start: "00:00"
+      end: "01:30"
+    - start: "02:00"
+      end: "03:30"
+  output_path: "trimmed.mp4"
+```
+
+### Speed Adjustment
+```yaml
 change_playback_speed:
   video_path: "input.mp4"
-  speed: 2 # 2x faster
-  output_path: "output_speed.mp4"
+  speed: 1.5
+  output_path: "sped_up.mp4"
+
 change_subtitle_speed:
-    subtitle_path: "input.srt"
-    speed: 0.5 # 0.5x slower
-    output_path: "output_subtitle.srt"
+  video_path: "input.mp4"
+  speed: 1.5
+  output_path: "adjusted_subs.mp4"
+```
+
+## Notes
+
+- All time values should be in MM:SS format (e.g., "01:30" for 1 minute and 30 seconds)
+- Make sure you have sufficient disk space for output files
+- For large videos, processing might take some time
+- Check the `config_example.yaml` file for more configuration examples
+
+## License
+
+[Your License Here]
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.

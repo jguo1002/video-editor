@@ -6,6 +6,15 @@ import argparse
 import os
 from datetime import datetime, timedelta
 import yaml
+from src import (
+    concat_videos,
+    trim_video_by_intervals,
+    cut_video_with_sliding_window,
+    change_playback_speed,
+    change_subtitle_speed,
+    add_frozen_frame,
+    load_config
+)
 
 
 def load_config(config_path: str) -> dict:
@@ -30,40 +39,6 @@ def load_config(config_path: str) -> dict:
         return config
     except yaml.YAMLError as e:
         raise yaml.YAMLError(f"Error parsing YAML: {e}")
-
-
-def concat_videos(video_paths: list, output_path: str = None):
-    """
-    Concatenates multiple video files into a single video.
-
-    Args:
-        video_paths (list): List of video file paths.
-        output_path (str, optional): Output file path. If None, the concatenated
-            clip is returned rather than written. Defaults to None.
-
-    Returns:
-         moviepy.editor.VideoFileClip: concatenated video file if output path is none
-
-    Raises:
-        FileNotFoundError: if video files in video_path does not exist
-        Exception: If there is an error during the concatenating process
-    """
-    videos = []
-    for video_path in video_paths:
-        if not os.path.exists(video_path):
-            raise FileNotFoundError(f"Video file not found: {video_path}")
-        try:
-            videos.append(VideoFileClip(video_path))
-        except Exception as e:
-            raise Exception(f"Error when loading video clip: {e}")
-    final_clip = concatenate_videoclips(videos)
-    if output_path is None:
-        return final_clip
-    try:
-        final_clip.write_videofile(
-            output_path, codec="libx264", bitrate="8000k")
-    except Exception as e:
-        raise Exception(f"Error while saving: {e}")
 
 
 def time_to_seconds(time_str: str) -> float:
@@ -372,6 +347,23 @@ def process_video(config):
                 trim_video_by_intervals(video_path, intervals, output_path)
             except Exception as e:
                 raise Exception(f"Error with cut video: {e}")
+
+        elif operation == "cut_video_with_sliding_window":
+            video_path = params.get("video_path")
+            window_length = params.get("window_length")
+            slide_step = params.get("slide_step")
+            start_time = params.get("start_time", 0)
+            end_time = params.get("end_time")
+            output_dir = params.get("output_dir")
+
+            if not all([video_path, window_length, slide_step]):
+                raise ValueError(
+                    "video_path, window_length, and slide_step must be specified")
+            try:
+                cut_video_with_sliding_window(
+                    video_path, window_length, slide_step, start_time, end_time, output_dir)
+            except Exception as e:
+                raise Exception(f"Error with sliding window cut: {e}")
 
         elif operation == "change_playback_speed":
             video_path = params.get("video_path")
