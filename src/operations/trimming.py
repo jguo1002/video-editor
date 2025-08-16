@@ -1,7 +1,7 @@
-from moviepy.editor import VideoFileClip, concatenate_videoclips
+from moviepy import VideoFileClip, concatenate_videoclips
 import os
 from typing import List, Tuple, Any
-from ..utils.time_utils import time_to_seconds
+from ..utils.time_utils import time_to_seconds, parse_time_with_end
 
 
 def _segment_video_by_intervals(video_path: str, intervals: list) -> Tuple[List[Any], List[Any]]:
@@ -41,8 +41,8 @@ def _segment_video_by_intervals(video_path: str, intervals: list) -> Tuple[List[
             f"\nProcessing interval {idx + 1}/{len(intervals)}: {start_time} - {end_time}...")
         try:
             start_seconds = time_to_seconds(start_time)
-            end_seconds = time_to_seconds(end_time)
-            subclip = video.subclip(start_seconds, end_seconds)
+            end_seconds = parse_time_with_end(end_time, video.duration)
+            subclip = video.subclipped(start_seconds, end_seconds)
             subclips.append(subclip)
             audio_clips.append(subclip.audio)
         except ValueError as e:
@@ -139,7 +139,7 @@ def cut_video_with_sliding_window(video_path: str, window_length: float, slide_s
 
         # Convert end_time from MM:SS to seconds if provided, otherwise use video duration
         if end_time is not None:
-            end_seconds = time_to_seconds(end_time)
+            end_seconds = parse_time_with_end(end_time, video.duration)
         else:
             end_seconds = video.duration
 
@@ -150,7 +150,7 @@ def cut_video_with_sliding_window(video_path: str, window_length: float, slide_s
         current_time = start_seconds
 
         while current_time + window_length <= end_seconds:
-            clip = video.subclip(current_time, current_time + window_length)
+            clip = video.subclipped(current_time, current_time + window_length)
             clips.append(clip)
             current_time += slide_step
 

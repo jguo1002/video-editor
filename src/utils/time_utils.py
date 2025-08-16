@@ -22,6 +22,35 @@ def time_to_seconds(time_str: str) -> float:
             f"Invalid time format {e}, time should be in format MM:SS")
 
 
+def parse_time_with_end(time_str: str, video_duration: float = None) -> float:
+    """
+    Parses a time string that can include "end" as a special keyword.
+
+    Args:
+        time_str (str): Time string in format MM:SS or "end"
+        video_duration (float, optional): Video duration in seconds. Required if time_str is "end".
+
+    Returns:
+        float: Time in seconds
+
+    Raises:
+        ValueError: If time_str is "end" but video_duration is not provided
+        ValueError: If time_str is not in valid format
+    """
+    if time_str.lower() == "end":
+        if video_duration is None:
+            raise ValueError(
+                "video_duration must be provided when using 'end'")
+        return video_duration
+
+    # Try to parse as MM:SS format
+    try:
+        return time_to_seconds(time_str)
+    except ValueError:
+        raise ValueError(
+            f"Invalid time format: {time_str}. Use MM:SS format or 'end'")
+
+
 def parse_time(time_str: str) -> timedelta:
     """
     Parses a time string in format HH:MM:SS,mmm to timedelta.

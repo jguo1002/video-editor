@@ -1,4 +1,4 @@
-from moviepy.editor import VideoFileClip, concatenate_videoclips
+from moviepy import VideoFileClip, concatenate_videoclips
 import os
 
 
@@ -41,8 +41,8 @@ def add_frozen_frame(video_path: str, freeze_time: float, freeze_duration: float
         frozen_frame = video.to_ImageClip(
             t=freeze_time).set_duration(freeze_duration)
 
-        video_part1 = video.subclip(0, freeze_time)
-        video_part2 = video.subclip(freeze_time)
+        video_part1 = video.subclipped(0, freeze_time)
+        video_part2 = video.subclipped(freeze_time)
 
         final_video = concatenate_videoclips(
             [video_part1, frozen_frame, video_part2])

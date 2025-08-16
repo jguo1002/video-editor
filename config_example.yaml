@@ -34,9 +34,11 @@ trim_video_by_intervals:
 
 # Change video playback speed
 change_playback_speed:
-  video_path: "input.mp4"
-  speed: 1.5 # Speed multiplier (1.5x faster)
-  output_path: "sped_up.mp4"
+  video_path: "example_video.mp4"
+  speed: 2.0 # Speed multiplier (2x faster)
+  intervals:
+    - ["00:30", "end"] # From 00:30 to the end of the video
+  output_path: "example_video_speedx2.mp4"
 
 # Change subtitle timing to match video speed
 change_subtitle_speed:

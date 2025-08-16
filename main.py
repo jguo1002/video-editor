@@ -1,5 +1,6 @@
-from moviepy.editor import VideoFileClip, concatenate_videoclips, concatenate_audioclips
-from moviepy.video.fx import all as vfx
+from moviepy import VideoFileClip, concatenate_videoclips, concatenate_audioclips
+from src.utils.time_utils import parse_time_with_end
+
 # from moviepy.audio.fx import all as afx  # Not used in the provided code
 from typing import Tuple, List, Any
 import argparse
@@ -101,8 +102,8 @@ def add_frozen_frame(video_path: str, freeze_time: float, freeze_duration: float
         frozen_frame = video.to_ImageClip(
             t=freeze_time).set_duration(freeze_duration)
 
-        video_part1 = video.subclip(0, freeze_time)
-        video_part2 = video.subclip(freeze_time)
+        video_part1 = video.subclipped(0, freeze_time)
+        video_part2 = video.subclipped(freeze_time)
 
         final_video = concatenate_videoclips(
             [video_part1, frozen_frame, video_part2])
@@ -157,8 +158,8 @@ def _segment_video_by_intervals(video_path: str, intervals: list) -> Tuple[List[
             f"\nProcessing interval {idx + 1}/{len(intervals)}: {start_time} - {end_time}...")
         try:
             start_seconds = time_to_seconds(start_time)
-            end_seconds = time_to_seconds(end_time)
-            subclip = video.subclip(start_seconds, end_seconds)
+            end_seconds = parse_time_with_end(end_time, video.duration)
+            subclip = video.subclipped(start_seconds, end_seconds)
             subclips.append(subclip)
             audio_clips.append(subclip.audio)
         except ValueError as e:
@@ -214,42 +215,6 @@ def trim_video_by_intervals(video_path: str, intervals: list, output_path: str =
     else:
         final_video = concatenate_videoclips(subclips, method="compose")
         return final_video
-
-
-def change_playback_speed(video_path: str, speed: float, output_path: str):
-    """
-    Changes the playback speed of a video.
-
-    Args:
-        video_path (str): Path to the input video file.
-        speed (float): The playback speed multiplier.
-        output_path (str): Path to save the output video.
-
-     Raises:
-        FileNotFoundError: if input video file is not found
-        Exception: if there is any error during the playback speed change
-    """
-    if not os.path.exists(video_path):
-        raise FileNotFoundError(f"Video file not found: {video_path}")
-    try:
-        video = VideoFileClip(video_path)
-        video_with_new_speed = video.fx(vfx.speedx, speed)
-    except Exception as e:
-        raise Exception(f"Error loading or modifying video: {e}")
-
-    if video.audio:
-        try:
-            audio_with_new_speed = video.audio.set_fps(video.audio.fps * speed)
-            video_with_new_speed = video_with_new_speed.set_audio(
-                audio_with_new_speed)
-        except Exception as e:
-            raise Exception(f"Error changing the audio speed: {e}")
-    try:
-        video_with_new_speed.write_videofile(
-            output_path, fps=60, codec="mpeg4", bitrate="8000k")
-    except Exception as e:
-        raise Exception(f"Error saving video: {e}")
-    print(f"Video with {speed}x speed created at {output_path}")
 
 
 def change_subtitle_speed(subtitle_path: str, speed: float, output_path: str):
@@ -369,11 +334,13 @@ def process_video(config):
             video_path = params.get("video_path")
             speed = params.get("speed")
             output_path = params.get("output_path")
+            intervals = params.get("intervals")
             if not all([video_path, speed, output_path]):
                 raise ValueError(
                     "video_path, speed, and output_path must be specified")
             try:
-                change_playback_speed(video_path, speed, output_path)
+                change_playback_speed(
+                    video_path, speed, output_path, intervals)
             except Exception as e:
                 raise Exception(f"Error with change playback speed: {e}")
 
