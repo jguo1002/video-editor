@@ -16,6 +16,7 @@ from src import (
     add_frozen_frame,
     load_config
 )
+from src.operations.audio_conversion import convert_video_to_audio, extract_audio_segment
 
 
 def load_config(config_path: str) -> dict:
@@ -355,6 +356,45 @@ def process_video(config):
                 change_subtitle_speed(subtitle_path, speed, output_path)
             except Exception as e:
                 raise Exception(f"Error with change subtitle speed: {e}")
+
+        elif operation == "convert_video_to_audio":
+            video_path = params.get("video_path")
+            output_path = params.get("output_path")
+            audio_format = params.get("audio_format", "mp3")
+            audio_codec = params.get("audio_codec", "mp3")
+            bitrate = params.get("bitrate", "192k")
+            verbose = params.get("verbose", True)
+
+            if not all([video_path, output_path]):
+                raise ValueError(
+                    "video_path and output_path must be specified")
+            try:
+                convert_video_to_audio(
+                    video_path, output_path, audio_format, audio_codec, bitrate, verbose
+                )
+            except Exception as e:
+                raise Exception(f"Error with audio conversion: {e}")
+
+        elif operation == "extract_audio_segment":
+            video_path = params.get("video_path")
+            output_path = params.get("output_path")
+            start_time = params.get("start_time", 0.0)
+            end_time = params.get("end_time")
+            audio_format = params.get("audio_format", "mp3")
+            audio_codec = params.get("audio_codec", "mp3")
+            bitrate = params.get("bitrate", "192k")
+            verbose = params.get("verbose", True)
+
+            if not all([video_path, output_path]):
+                raise ValueError(
+                    "video_path and output_path must be specified")
+            try:
+                extract_audio_segment(
+                    video_path, output_path, start_time, end_time,
+                    audio_format, audio_codec, bitrate, verbose
+                )
+            except Exception as e:
+                raise Exception(f"Error with audio segment extraction: {e}")
 
 
 if __name__ == "__main__":

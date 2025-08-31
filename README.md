@@ -9,6 +9,8 @@ A Python-based video editing tool that provides various operations for video pro
 - **Speed Adjustment**: Change video playback speed and subtitle timing
 - **Frozen Frames**: Add frozen frames at specific timestamps
 - **Interval Trimming**: Trim videos based on specific time intervals
+- **Audio Conversion**: Convert MP4 videos to various audio formats (MP3, WAV, OGG, AAC, M4A)
+- **Audio Extraction**: Extract specific audio segments from videos
 - **Configurable Operations**: All operations can be configured via YAML files
 
 ## Project Structure
@@ -21,13 +23,15 @@ video_editor/
 │   │   ├── concatenation.py
 │   │   ├── trimming.py
 │   │   ├── speed.py
-│   │   └── frozen_frame.py
+│   │   ├── frozen_frame.py
+│   │   └── audio_conversion.py
 │   └── utils/
 │       ├── time_utils.py
 │       └── config.py
 ├── main.py
 ├── config.yaml
 ├── config_example.yaml
+├── test_audio_conversion.py
 └── requirements.txt
 ```
 
@@ -130,11 +134,46 @@ change_subtitle_speed:
   output_path: "adjusted_subs.mp4"
 ```
 
+### Audio Conversion
+```yaml
+# Convert MP4 to MP3
+convert_video_to_audio:
+  video_path: "input.mp4"
+  output_path: "output.mp3"
+  audio_format: "mp3"
+  audio_codec: "mp3"
+  bitrate: "192k"
+  verbose: true
+
+# Extract audio segment
+extract_audio_segment:
+  video_path: "input.mp4"
+  output_path: "segment.mp3"
+  start_time: 10.0
+  end_time: 30.0
+  audio_format: "mp3"
+  bitrate: "320k"
+```
+
+## Testing
+
+You can test the audio conversion functionality using the provided test script:
+
+```bash
+python test_audio_conversion.py
+```
+
+This script will:
+- Convert a sample video to MP3 format
+- Extract a specific audio segment
+- Test conversion to different audio formats (WAV, OGG, M4A)
+
 ## Notes
 
 - All time values should be in MM:SS format (e.g., "01:30" for 1 minute and 30 seconds)
 - Make sure you have sufficient disk space for output files
 - For large videos, processing might take some time
+- Audio conversion supports multiple formats: MP3, WAV, OGG, AAC, M4A
 - Check the `config_example.yaml` file for more configuration examples
 
 ## License

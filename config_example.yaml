@@ -45,3 +45,23 @@ change_subtitle_speed:
   subtitle_path: "subtitles.srt"
   speed: 1.5 # Speed multiplier (1.5x faster)
   output_path: "sped_up_subtitles.srt"
+
+# Convert MP4 video to MP3 audio
+convert_video_to_audio:
+  video_path: "input.mp4"
+  output_path: "output.mp3"
+  audio_format: "mp3" # Options: mp3, wav, ogg, aac, m4a
+  audio_codec: "mp3" # Audio codec to use
+  bitrate: "192k" # Audio quality (128k, 192k, 320k)
+  verbose: true # Show progress information
+
+# Extract a specific segment of audio from video
+extract_audio_segment:
+  video_path: "input.mp4"
+  output_path: "segment.mp3"
+  start_time: 10.0 # Start time in seconds
+  end_time: 30.0 # End time in seconds (optional, defaults to video end)
+  audio_format: "mp3" # Output audio format
+  audio_codec: "mp3" # Audio codec to use
+  bitrate: "320k" # High quality audio
+  verbose: true # Show progress information
